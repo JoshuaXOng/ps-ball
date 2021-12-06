@@ -1,0 +1,2 @@
+all:
+	g++ -std=c++17 -I dependencies/SDL2/include -L dependencies/SDL2/lib -I dependencies/SDL2_image/include -L dependencies/SDL2_image/lib -o main src/main.cpp src/utils/*.cpp src/game_engine/*.cpp src/models/*.cpp -l mingw32 -l SDL2main -l SDL2 -l SDL2_image
