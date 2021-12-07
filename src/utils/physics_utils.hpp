@@ -14,3 +14,18 @@ class PhysicsUtils {
         static SDL_Point interpolatePoint(SDL_Point target, SDL_Point current);
 
 };
+
+class TwoDVector {
+
+    public:
+
+        float xComponent;
+        float yComponent;
+
+        SDL_Point position;
+
+        TwoDVector(float xComponent, float yComponent, SDL_Point position);
+
+        float calcMagnitude();
+
+};

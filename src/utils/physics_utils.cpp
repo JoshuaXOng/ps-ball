@@ -4,6 +4,10 @@
 #include "iostream"
 #include <math.h>
 
+//
+// PhysicsUtils class
+//
+
 float PhysicsUtils::calcDistance(SDL_Point initialPos, SDL_Point finalPos) {
     int xDistance = finalPos.x - initialPos.x;
     int yDistance = finalPos.y - initialPos.y;
@@ -24,4 +28,16 @@ SDL_Point PhysicsUtils::interpolatePoint(SDL_Point target, SDL_Point current) {
     return { xCoord, yCoord };
 }
 
+//
+// TwoDVector class
+//
 
+TwoDVector::TwoDVector(float xComponent, float yComponent, SDL_Point position) {
+    this->xComponent = xComponent;
+    this->yComponent = yComponent;
+    this->position = position;
+};
+
+float TwoDVector::calcMagnitude() {
+    return sqrt(pow(this->xComponent, 2) + pow(this->yComponent, 2));
+};

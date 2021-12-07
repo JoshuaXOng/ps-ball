@@ -12,9 +12,9 @@
 #include "../models/ball.hpp"
 #include "entity_factory.hpp"
 
-//////////////////////////////////////////////////////////////////////
-// GAME ENGINE PUBLIC                                               //
-//////////////////////////////////////////////////////////////////////
+//
+// GAME ENGINE PUBLIC                                               
+//
 
 GameEngine::GameEngine() {
     this->mouseTelemetry = new MouseTelemetry(100, 10);
@@ -46,9 +46,9 @@ void GameEngine::terminate() {
     SDL_Quit();
 };
 
-//////////////////////////////////////////////////////////////////////
-// GAME ENGINE PRIVATE                                              //
-//////////////////////////////////////////////////////////////////////
+//
+// GAME ENGINE PRIVATE                                              
+//
 
 void GameEngine::handleEvents() {    
     SDL_Event event;
@@ -60,9 +60,9 @@ void GameEngine::handleEvents() {
             case SDL_MOUSEBUTTONDOWN:
                 {
                     SDL_Point mousePosition = this->mouseTelemetry->getCurrentPosition();
-                    Ball* ball = EntityFactory::createBlueBall(
-                        this->sdlRenderer, { mousePosition.x, mousePosition.y, 100, 100 }, 0, { 20, 20 }
-                    );
+                    SDL_Rect* destinationArea = new SDL_Rect { mousePosition.x, mousePosition.y, 100, 100 };
+                    double* rotation = new double { 5 };
+                    Ball* ball = EntityFactory::createBlueBall(this->sdlRenderer, destinationArea, rotation);
                     this->updateables.push_back((Updateable*) ball);
                     this->renderables.push_back((Renderable*) ball);
                 }
@@ -87,7 +87,7 @@ void GameEngine::update() {
 void GameEngine::render() { 
     SDL_RenderClear(this->sdlRenderer);
     std::function<void()> renderRenderables = [=]() {
-        for (Renderable* renderable : this->renderables) 
+        for (Renderable* renderable : this->renderables)
             renderable->onRender();
     };
     renderRenderables();

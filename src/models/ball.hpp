@@ -7,42 +7,88 @@
 #include "../game_engine/game_engine.hpp"
 #include "../game_engine/game_engine_interfaces.hpp"
 #include "model_interfaces.hpp"
+#include "../utils/physics_utils.hpp"
 
 class Ball : public Updateable, Renderable, Physicsable {
 
     public:
 
-        SDL_Renderer* sdlRenderer;
-        SDL_Texture* sdlTexture;
+        //
+        // Class properties
+        //
 
-        SDL_Rect destinationArea = { 2, 2, 2, 2 };
-        double angleOfRotation;
-        SDL_Point* pointOfRotation;
+        SDL_Renderer* renderer;
+        SDL_Texture* texture;
+        SDL_Rect* destinationArea;
+        double* angleOfRotation;
 
-        std::vector<std::pair<std::pair<float, float>, std::pair<float, float>>> forces = { 
-            { { 0, 9.8 }, { 50, 50 } } 
-        };
-        std::pair<float, float> velocityComponents = { 0, 0 };
-        float mass = 40;
+        SDL_Point* position;
+        TwoDVector* velocity;
+        TwoDVector* acceleration;
 
+        TwoDVector* netForce;
+        std::vector<TwoDVector*> forces;
+        float mass;
+
+        float* rotationalDisplacement;
+        float* rotationalVelocity;
+        float* rotationalAcceleration;
+
+        //
+        // Default constructor and destructor
+        //
+
+        /**
+         * @brief Construct a new Ball object
+         * 
+         * @param filePathToSurface This is relative from the working directory.
+         */
         Ball(
-            const char* filePathToSurface, SDL_Renderer* sdlRenderer,
-            SDL_Rect destinationArea, double angleOfRotation, SDL_Point pointOfRotation
+            const char* filePathToSurface, SDL_Renderer* renderer,
+            SDL_Rect* destinationArea, double* angleOfRotation
         );
+
         ~Ball();
 
-        SDL_Rect* getDestinationArea() {
-            return &this->destinationArea;
-        }
+        //
+        // Ball methods
+        //
 
-        bool getIsCollidable() {
-            return true;
-        }
+        void teleport();   
+
+        //
+        // Updateable virtual members
+        //
 
         void onUpdate(std::vector<Updateable*> updateables);
+        bool getIsCollidable();
+        SDL_Rect* getDestinationArea();
 
-        void onRender();
+    private:
 
-        void teleport();
+        //
+        // Renderable virtual members
+        //
+
+        SDL_Renderer* getRenderer();
+        SDL_Texture* getTexture();
+        // SDL_Rect* Ball::Renderable::getDestinationArea();
+        double getAngleOfRotation();
+
+        //
+        // Physicsable virtual members
+        //     
+
+        SDL_Point* getPosition();
+        TwoDVector* getVelocity();
+        TwoDVector* getAcceleration();
+
+        TwoDVector* getNetForce();
+        std::vector<TwoDVector*> getForces();
+        float getMass();
+
+        float* getRotationalDisplacement();
+        float* getRotationalVelocity();
+        float* getRotationalAcceleration();
 
 };

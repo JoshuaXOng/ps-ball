@@ -7,9 +7,6 @@ class EntityFactory {
     
     public:
 
-        static Ball* createBlueBall(
-            SDL_Renderer* renderer, SDL_Rect creationArea, 
-            double rotation, SDL_Point pointOfRotation
-        );
+        static Ball* createBlueBall(SDL_Renderer* renderer, SDL_Rect* destinationArea, double* rotation);
 
 };

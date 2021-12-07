@@ -12,87 +12,134 @@
 
 class GameEngine;
 
+//
+// Ball Class
+//
+
 Ball::Ball(
-    const char* filePathToSurface, SDL_Renderer* sdlRenderer,
-    SDL_Rect destinationArea, double angleOfRotation, SDL_Point pointOfRotation
+    const char* filePathToSurface, SDL_Renderer* renderer,
+    SDL_Rect* destinationArea, double* angleOfRotation
 ) {
-    this->sdlRenderer = sdlRenderer;
-    this->sdlTexture = SdlScreenUtils::createTexture(filePathToSurface, sdlRenderer);
+
+    this->renderer = renderer;
+    this->texture = SdlScreenUtils::createTexture(filePathToSurface, this->renderer);
     this->destinationArea = destinationArea;
     this->angleOfRotation = angleOfRotation;
-    // this->pointOfRotation = &pointOfRotation;
-    SDL_Point test = { this->destinationArea.x + 50, this->destinationArea.y + 50 };
-    this->pointOfRotation = &test;
+
+    this->position = new SDL_Point({ this->destinationArea->x, this->destinationArea->y });
+    this->velocity = new TwoDVector(0, 0, { 0, 0 });
+    this->acceleration = new TwoDVector(0, 0, { 0, 0 });
+
+    this->netForce = new TwoDVector(0, 0, { 0, 0 });
+    this->forces = { new TwoDVector(0, 10, { 0, 0 }) };
+    this->mass = 40;
+    
+    this->rotationalDisplacement = 0;
+    this->rotationalVelocity = 0;
+    this->rotationalAcceleration = 0;
+
 }
 
 Ball::~Ball() { }
 
+//
+// Updateable virtual implementations
+//
+
 void Ball::onUpdate(std::vector<Updateable*> updateables) {
     
-    // this->destinationArea.y += 1;
+    this->resolveEverything();
+    this->destinationArea->x = this->position->x;
+    this->destinationArea->y = this->position->y;
 
-    // SDL_Point point = PhysicsUtils::interpolatePoint({ x, y }, { destinationArea.x, destinationArea.y });
-    // this->destinationArea.x += point.x;
-    // this->destinationArea.y += point.y;
-    // SDL_Rect test = { 100, 100, 100, 100 };
-    // if (SDL_HasIntersection(&this->destinationArea, &test))
-    //     std::cout << "Contact" << std::endl;
-    
-    float netYForce = 0;
-    for (std::pair<std::pair<float, float>, std::pair<float, float>> force : this->forces) {
-        netYForce += force.first.second;
-    }
-    float yAcceleration = netYForce / this->mass;
-    this->velocityComponents.second += yAcceleration;
-    this->destinationArea.y += this->velocityComponents.second; 
+    // if (this->destinationArea.y > 500) {
+    //     this->forces = { 
+    //         { { 0, 9.8 }, { 50, 50 } },
+    //         { { -2, -9.8 }, { 80, 50 } } 
+    //     };
+    //     this->velocityComponents.second = 0;
+    //     // int offset = this->destinationArea.y - 500;
+    //     // this->destinationArea.y -= offset;
+    // }
 
-    float netXForce = 0;
-    for (std::pair<std::pair<float, float>, std::pair<float, float>> force : this->forces) {
-        netXForce += force.first.first;
-    }
-    float xAcceleration = netXForce / this->mass;
-    this->velocityComponents.first += xAcceleration;
-    this->destinationArea.x += this->velocityComponents.first; 
-
-    float netMoment = 0;
-    for (std::pair<std::pair<float, float>, std::pair<float, float>> force : this->forces) {
-        float x = (force.second.first - 50) * -1 * force.first.second;
-        netMoment += x;
-        float y = (force.second.second - 50) * force.first.first;
-        netMoment += y;
-    }
-    // std::cout << netMoment << std::endl;
-    this->angleOfRotation += -netMoment / 500;
-    
-
-    if (this->destinationArea.y > 500) {
-        this->forces = { 
-            { { 0, 9.8 }, { 50, 50 } },
-            { { -2, -9.8 }, { 80, 50 } } 
-        };
-        this->velocityComponents.second = 0;
-        // int offset = this->destinationArea.y - 500;
-        // this->destinationArea.y -= offset;
-    }
-
-    for (Updateable* updateable : updateables) {
-        // std::cout << updateable->getIsCollidable() << std::endl;
-        // Ball* test = (Ball*) updateable;
-        // std::cout << (*updateable->getDestinationArea()).y << std::endl;
-        if (this != updateable && SDL_HasIntersection(this->getDestinationArea(), updateable->getDestinationArea())) {
-            std::cout << "Contact" << std::endl;
-            this->destinationArea.y -= 1;
-        }
-    }
+    // for (Updateable* updateable : updateables) {
+    //     // std::cout << updateable->getIsCollidable() << std::endl;
+    //     // Ball* test = (Ball*) updateable;
+    //     // std::cout << (*updateable->getDestinationArea()).y << std::endl;
+    //     if (this != updateable && SDL_HasIntersection(this->getDestinationArea(), updateable->getDestinationArea())) {
+    //         std::cout << "Contact" << std::endl;
+    //         this->destinationArea.y -= 1;
+    //     }
+    // }
 
     // this->pointOfRotation = { this->destinationArea.x + 50, this->destinationArea.y + 50 };
 
 }
 
-void Ball::onRender() {
-    SDL_Point test = { this->destinationArea.x + 50, this->destinationArea.y + 50 };
-    SDL_RenderCopyEx(this->sdlRenderer, this->sdlTexture, 
-        NULL, &this->destinationArea, 
-        this->angleOfRotation, NULL, SDL_FLIP_NONE
-    );
-}
+bool Ball::getIsCollidable() {
+    return true;
+};
+
+SDL_Rect* Ball::getDestinationArea() {
+    return this->destinationArea;
+};
+
+//
+// Renderable virtual implementations
+//
+
+SDL_Renderer* Ball::getRenderer() {
+    return this->renderer;
+};
+
+SDL_Texture* Ball::getTexture() {
+    return this->texture;
+};
+
+// SDL_Rect* Ball::Renderable::getDestinationArea() {
+//     return ((Ball*) this)->destinationArea;
+// };
+
+double Ball::getAngleOfRotation() {
+    return *this->angleOfRotation;
+};
+
+//
+// Physicsable virtual implementations
+// 
+
+SDL_Point* Ball::getPosition() {
+    return this->position;
+};
+
+TwoDVector* Ball::getVelocity() {
+    return this->velocity;
+};
+
+TwoDVector* Ball::getAcceleration() {
+    return this->acceleration;
+};
+
+TwoDVector* Ball::getNetForce() {
+    return this->netForce;
+};
+
+std::vector<TwoDVector*> Ball::getForces() {
+    return this->forces;
+};
+
+float Ball::getMass() {
+    return this->mass;
+};
+
+float* Ball::getRotationalDisplacement() {
+    return this->rotationalDisplacement;
+}; 
+
+float* Ball::getRotationalVelocity() {
+    return this->rotationalVelocity;
+};
+
+float* Ball::getRotationalAcceleration() {
+    return this->rotationalAcceleration;
+};

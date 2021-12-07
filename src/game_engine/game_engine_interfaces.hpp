@@ -19,29 +19,11 @@ class Updateable {
 
     public: 
 
-        // WHAT THE FUCK...
-        // WHAT THE FUCK... If not initialized...
-        // WHAT THE FUCK...
-        // bool isCollidable = true;
-
-        // WHAT THE FUCK...
-        // WHAT THE FUCK... If not initialized...
-        // WHAT THE FUCK...
-        // SDL_Rect destinationArea = { 0, 0, 0, 0 };
-
         virtual void onUpdate(std::vector<Updateable*> updateables) = 0;
 
         virtual bool getIsCollidable() = 0;
-        void setIsCollidable();
 
         virtual SDL_Rect* getDestinationArea() = 0;
-        void setDestinationArea();
-
-        // virtual std::vector<int> getForces();
-        // virtual std::vector<int> getMass();
-        // virtual std::vector<int> getAccelerationComponents();
-        // virtual std::vector<int> getVelocityComponents();
-        // virtual std::vector<int> getPositionComponents();
 
 };
 
@@ -49,6 +31,13 @@ class Renderable {
 
     public: 
 
-        virtual void onRender() { };
+        void onRender();
+
+    private:
+
+        virtual SDL_Renderer* getRenderer() = 0;
+        virtual SDL_Texture* getTexture() = 0;
+        virtual SDL_Rect* getDestinationArea() = 0;
+        virtual double getAngleOfRotation() = 0;
 
 };
