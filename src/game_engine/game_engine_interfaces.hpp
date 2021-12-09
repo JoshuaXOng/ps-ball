@@ -7,14 +7,6 @@
 #include "./game_engine.hpp"
 #include "./state_repository.hpp"
 
-class Intervalable {
-
-    public: 
-
-        virtual void onInterval(int interval) { };
-
-};
-
 class Updateable {
 
     public: 

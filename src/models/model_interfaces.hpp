@@ -1,10 +1,18 @@
 #pragma once
 #include <SDL2/SDL.h>
+#include <box2d/box2d.h>
+#include <box2d/b2_world.h>
+#include <box2d/b2_body.h>
+#include <box2d/b2_polygon_shape.h>
 
 #include <vector>
 #include <utility>
 
 #include "../utils/physics_utils.hpp"
+
+//
+// Physicsable abstract class
+//
 
 class Physicsable {
     
@@ -46,5 +54,30 @@ class Physicsable {
     protected:
 
         void resolveEverything();
+
+};
+
+//
+// Box2D abstract class
+//
+
+class B2Entity {
+
+    public:
+
+        void spawn(b2World& world);
+        void spawn(b2World* world);
+
+    private:
+
+        virtual float getDensity() = 0;
+        virtual float getFriction() = 0;
+
+        virtual b2BodyDef* getBodyDef() = 0;
+        virtual b2Body* getBody() = 0;
+        virtual b2PolygonShape* getShape() = 0;
+        virtual b2FixtureDef* getFixtureDef() = 0;
+
+        virtual void setBody(b2Body* body) = 0;
 
 };

@@ -5,7 +5,7 @@
 #include "game_engine_interfaces.hpp"
 
 //
-// Renderable class 
+// Renderable class
 //
 
 void Renderable::onRender() {

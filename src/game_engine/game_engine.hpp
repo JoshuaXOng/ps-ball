@@ -1,7 +1,11 @@
 #pragma once
 #include <SDL2/SDL.h>
-#include <stdio.h>
+#include <box2d/box2d.h>
+#include <box2d/b2_world.h>
+#include <box2d/b2_body.h>
+#include <box2d/b2_polygon_shape.h>
 
+#include <stdio.h>
 #include <functional>
 #include <vector>
 
@@ -13,30 +17,34 @@ class GameEngine {
 
     public:
 
+        b2World* world;
+
         MouseTelemetry* mouseTelemetry;
 
-        StateRepository* stateRepository;
+        StateRepository* state;
 
         std::vector<Updateable*> updateables;
         std::vector<Renderable*> renderables;
 
-        GameEngine();
+        bool isRunning = false;
+        bool isReadyToUpdate = false;
+        bool isReadyToRender = false;
+
+        int tickFrequency;
+
+        GameEngine(int tickFrequency);
         ~GameEngine();
 
-        bool getIsMainWindowRunning();
-
-        void startMainWindow(const char* windowTitle, int windowXPos, int windowYPos, int windowWidth, int windowHeight, Uint32 sdlWindowFlags);
-
+        void startMainWindow(const char* title, int xPos, int yPos, int width, int height, Uint32 sdlWindowFlags);
+        
         void tick();
 
-        void terminate();
+        void cleanUp();
 
     private:
 
-        bool isMainWindowRunning = false;
-
-        SDL_Window* sdlWindow;
-        SDL_Renderer* sdlRenderer;
+        SDL_Window* window;
+        SDL_Renderer* renderer;
 
         void handleEvents();
         void update();

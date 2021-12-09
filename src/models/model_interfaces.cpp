@@ -66,4 +66,44 @@ void Physicsable::resolveEverything() {
     this->resolveRotationalDisplacement();
 };
 
+//
+// B2Entity class
+//
+
+void B2Entity::spawn(b2World& world) {    
+    
+    //
+    // Reference vs pointer...
+    // Use pass-by-pointer if NULL is a valid parameter value or if you want to reassign the pointer.
+    //
+
+    // b2Vec2 grav(0, 10);
+    // b2World* test = new b2World(grav);
+    // world = *test;
+    // std::cout << &world << std::endl;
+    // std::cout << &*test << std::endl;
+
+    //
+    // Actual method code
+    //
+
+    b2BodyDef* bodyDef = this->getBodyDef();
+    b2Body* body = world.CreateBody(bodyDef);
+    this->setBody(body);
+
+    b2FixtureDef* fixtureDef = this->getFixtureDef();
+    body->CreateFixture(fixtureDef);
+
+};
+
+void B2Entity::spawn(b2World* world) {    
+    
+    b2BodyDef* bodyDef = this->getBodyDef();
+    b2Body* body = world->CreateBody(bodyDef);
+    this->setBody(body);
+
+    b2FixtureDef* fixtureDef = this->getFixtureDef();
+    body->CreateFixture(fixtureDef);
+
+};
 

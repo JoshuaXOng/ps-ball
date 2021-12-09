@@ -20,9 +20,27 @@
 
 int main(int argc, char** argv) {
 
-    //
-    // Hello Box2D
-    //
+    GameEngine* gameEngine = new GameEngine(10);
+    gameEngine->startMainWindow(
+        INITIAL_MAIN_WINDOW_TITLE, 
+        SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
+        INITIAL_WINDOW_WIDTH, INITIAL_WINDOW_HEIGHT, 0
+    );
+
+    while (gameEngine->isRunning)
+        gameEngine->tick();
+
+    gameEngine->cleanUp();
+
+    return EXIT_SUCCESS;
+
+};
+
+//
+// Hello Box2D ("tutorial")
+//
+
+void helloBox2D() {
 
     b2Vec2 gravity(0.0f, -10.0f);
     b2World world(gravity);
@@ -37,24 +55,31 @@ int main(int argc, char** argv) {
 
     groundBody->CreateFixture(&groundBox, 0.0f);
 
-    //
-    // My application
-    //
+    b2BodyDef bodyDef;
+    bodyDef.type = b2_dynamicBody;
+    bodyDef.position.Set(0.0f, 4.0f);
+    b2Body* body = world.CreateBody(&bodyDef);
 
-    // GameEngine* gameEngine = new GameEngine();
-    // gameEngine->startMainWindow(
-    //     MAIN_SDL_WINDOW_TITLE, 
-    //     SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-    //     INITIAL_SDL_WINDOW_WIDTH, INITIAL_SDL_WINDOW_HEIGHT, 0
-    // );
+    b2PolygonShape dynamicBox;
+    dynamicBox.SetAsBox(1.0f, 1.0f);
 
-    // while (gameEngine->getIsMainWindowRunning()) 
-    //     gameEngine->tick();
+    b2FixtureDef fixtureDef;
+    fixtureDef.shape = &dynamicBox;
+    fixtureDef.density = 1.0f;
+    fixtureDef.friction = 0.3f;
 
-    // gameEngine->terminate();
+    body->CreateFixture(&fixtureDef);
 
-    return GOOD_EXIT;
+    for (int32 i = 0; i < 60; ++i) {
+        world.Step(1.0f / 60.0f, 6, 2);
+        b2Vec2 position = body->GetPosition();
+        float angle = body->GetAngle();
+        printf("%4.2f %4.2f %4.2f\n", position.x, position.y, angle);
+    }
 
-}
+};
+
+
+
 
 
