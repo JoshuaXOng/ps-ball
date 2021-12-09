@@ -103,7 +103,7 @@ void B2Entity::spawn(b2World* world) {
     this->setBody(body);
 
     b2FixtureDef* fixtureDef = this->getFixtureDef();
-    body->CreateFixture(fixtureDef);
+    this->getBody()->CreateFixture(fixtureDef);
 
 };
 

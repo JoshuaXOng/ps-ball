@@ -25,23 +25,36 @@
 //
 
 GameEngine::GameEngine(int tickFrequency) { //: world(gravity) {
-    b2Vec2 gravity(5.0f, 10.0f);
-    this->world = new b2World(gravity);
+    b2Vec2* gravity = new b2Vec2(0.0f, 1.0f);
+    this->world = new b2World(*gravity);
     this->isRunning = true;    
     this->tickFrequency = tickFrequency;
     this->mouseTelemetry = new MouseTelemetry(100, 10);
+
+    b2BodyDef groundBodyDef;
+    groundBodyDef.position.Set(0.0f, 500.0f);
+
+    b2Body* groundBody = this->world->CreateBody(&groundBodyDef);
+
+    b2PolygonShape groundBox;
+    groundBox.SetAsBox(5000.0f, 1.0f);
+
+    groundBody->CreateFixture(&groundBox, 0.0f);
+
 };
 
 GameEngine::~GameEngine() { };
 
 void GameEngine::startMainWindow(const char* title, int xPos, int yPos, int width, int height, Uint32 sdlWindowFlags) {
-    this->isReadyToUpdate, this->isReadyToRender = true, true;
+    // this->isReadyToUpdate, this->isReadyToRender = true, true;
+    this->isReadyToUpdate = true;
+    this->isReadyToRender = true;
     this->window = SdlScreenUtils::createWindow(title, xPos, yPos, width, height, sdlWindowFlags); 
     this->renderer = SdlScreenUtils::createRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 };
 
 void GameEngine::tick() {
-    auto timeToUnblock = std::chrono::steady_clock::now() + std::chrono::milliseconds(this->tickFrequency);
+    auto timeToUnblock = std::chrono::steady_clock::now() + std::chrono::milliseconds(1 / this->tickFrequency);
     this->handleEvents();
     if (this->isReadyToUpdate)
         this->update();
@@ -73,19 +86,23 @@ void GameEngine::handleEvents() {
             case SDL_MOUSEBUTTONDOWN: 
                 {                        
                     SDL_Point mousePosition = this->mouseTelemetry->getCurrentPosition();
-                    SDL_Rect* destinationArea = new SDL_Rect { mousePosition.x, mousePosition.y, 2, 2 };
+                    SDL_Rect* destinationArea = new SDL_Rect { mousePosition.x, mousePosition.y, 100, 100 };
                     double* rotation = new double { 5 };
                     Square* square = new Square(this->renderer, destinationArea, rotation);
                     square->spawn(this->world);
+                    std::cout << square->body->GetPosition().y << std::endl;
                     // b2Vec2 test(100, 100);
                     // square->body->SetSleepingAllowed(false);
                     // square->body->SetLinearVelocity(test);
-                    // this->updateables.push_back((Updateable*) ball);
+                    this->updateables.push_back((Updateable*) square);
                     this->renderables.push_back((Renderable*) square);
                 }
                 break;
             case SDL_KEYUP:
-                std::cout << "Key up." << std::endl;
+                {
+                    b2Body* test = this->world->GetBodyList();
+                    std::cout << test->GetFixtureList() << std::endl;
+                }
                 break;
             default:
                 break;
@@ -94,8 +111,7 @@ void GameEngine::handleEvents() {
 };
 
 void GameEngine::update() { 
-    // this->world.Step(1000 / this->tickFrequency, 6, 2);
-    this->world->Step(1.0f / 60.0f, 6, 2);
+    this->world->Step(1.0f / this->tickFrequency, 6, 2);
     std::function<void()> updateUpdateables = [=]() {
         for (Updateable* updateable : this->updateables) 
             updateable->onUpdate(this->updateables);

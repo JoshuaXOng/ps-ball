@@ -20,7 +20,7 @@
 
 int main(int argc, char** argv) {
 
-    GameEngine* gameEngine = new GameEngine(10);
+    GameEngine* gameEngine = new GameEngine(100);
     gameEngine->startMainWindow(
         INITIAL_MAIN_WINDOW_TITLE, 
         SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,

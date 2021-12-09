@@ -27,9 +27,9 @@ Square::~Square() { };
 // B2Entity abstract class implementation
 //
 
-float Square::getDensity() { return 1; };
+float Square::getDensity() { return 1.0f; };
 
-float Square::getFriction() { return 0.3; };
+float Square::getFriction() { return 0.3f; };
 
 b2BodyDef* Square::getBodyDef() {
     b2BodyDef* bodyDef = new b2BodyDef();
@@ -66,9 +66,6 @@ void Square::setBody(b2Body* body) { this->body = body; };
 //
 
 SDL_Renderer* Square::getRenderer() { 
-    std::cout << this->body->GetPosition().y << std::endl;
-    // b2Vec2 test(100, 100);
-    // this->body->SetLinearVelocity(test);
     return this->renderer; 
 };
 

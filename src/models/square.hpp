@@ -7,7 +7,7 @@
 #include "model_interfaces.hpp"
 #include "../game_engine/game_engine_interfaces.hpp"
 
-class Square : public B2Entity, Renderable {
+class Square : public B2Entity, Updateable, Renderable {
 
     public: 
 
@@ -44,6 +44,14 @@ class Square : public B2Entity, Renderable {
         //
         // Updateable virtual members
         //
+
+        void onUpdate(std::vector<Updateable*> updateables) {
+            this->destinationArea->x = this->body->GetPosition().x;
+            this->destinationArea->y = this->body->GetPosition().y;
+            // this->angleOfRotation = this->body->GetAngle();
+        };
+        bool getIsCollidable() { return true; };
+        // virtual SDL_Rect* getDestinationArea() = 0;
 
         //
         // Renderable virtual members
