@@ -4,6 +4,7 @@
 #include <box2d/b2_polygon_shape.h>
 
 #include <iostream>
+#include <math.h>
 
 #include "square.hpp"
 #include "../utils/sdl_utils.hpp"
@@ -27,7 +28,7 @@ b2PolygonShape* getSquareShape(SDL_Rect& destinationArea) {
 };
 
 b2FixtureDef* Square::getSquareFixtureDef() {
-    if (this->shape == NULL || this->density == NULL || this->friction == NULL)
+    if (this->shape == NULL)
         throw "getSquareFixture(...) is being called but the required props are NULL.";
 
     b2FixtureDef* fixtureDef = new b2FixtureDef();
@@ -42,7 +43,7 @@ b2FixtureDef* Square::getSquareFixtureDef() {
 //
 
 Square::Square(const char* filePathToSurface, SDL_Renderer* renderer, SDL_Rect* destinationArea, double rotation)
-: Renderable(filePathToSurface, renderer, destinationArea, rotation) {
+: Renderable(filePathToSurface, renderer, destinationArea, rotation), B2Entity(destinationArea, rotation) {
     this->density = 1.0f;
     this->friction = 0.3f;
     this->bodyDef = getSquareBodyDef(*this->Renderable::destinationArea); // lvalue... rvalue
@@ -58,4 +59,5 @@ Square::~Square() { };
 
 void Square::onUpdate(std::vector<Updateable*> updateables) {
     this->B2Entity::onUpdate(updateables);
+    this->Renderable::rotation = (this->body->GetAngle() / 3.14) * 180;
 };

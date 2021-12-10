@@ -90,7 +90,6 @@ void GameEngine::handleEvents() {
                     double rotation = 50;
                     Square* square = new Square("assets/red_square.png", this->renderer, destinationArea, rotation);
                     square->spawn(*this->world);
-                    std::cout << "Test" << std::endl;
                     this->updateables.push_back((Updateable*) square);
                     this->renderables.push_back((Renderable*) square);
                 }
@@ -110,8 +109,9 @@ void GameEngine::handleEvents() {
 void GameEngine::update() { 
     this->world->Step(1.0f / this->tickFrequency, 6, 2);
     std::function<void()> updateUpdateables = [=]() {
-        for (Updateable* updateable : this->updateables) 
+        for (Updateable* updateable : this->updateables) {
             updateable->onUpdate(this->updateables);
+        }
     };
     updateUpdateables();
 };

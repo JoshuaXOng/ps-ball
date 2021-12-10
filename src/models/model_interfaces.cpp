@@ -10,6 +10,9 @@
 // B2Entity class
 //
 
+B2Entity::B2Entity(SDL_Rect* destinationArea, double rotation)
+: Updateable(destinationArea, rotation) { };
+
 void B2Entity::spawn(b2World& world) {    
     b2BodyDef* bodyDef = this->bodyDef;
     b2Body* body = world.CreateBody(bodyDef);
@@ -22,8 +25,8 @@ void B2Entity::spawn(b2World& world) {
 };
 
 //
-//
 // B2Entity class Updateable a-b-class member implementation
+//
 
 void B2Entity::onUpdate(std::vector<Updateable*> updateables) {
     this->destinationArea->x = this->body->GetPosition().x;

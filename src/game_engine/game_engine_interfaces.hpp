@@ -15,6 +15,8 @@ class Updateable {
 
     public: 
 
+        Updateable(SDL_Rect* destinationArea, double rotation);
+
         virtual void onUpdate(std::vector<Updateable*> updateables) = 0;
 
         bool isCollidable;

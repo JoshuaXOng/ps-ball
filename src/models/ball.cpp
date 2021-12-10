@@ -17,7 +17,7 @@ class GameEngine;
 //
 
 Ball::Ball(const char* filePathToSurface, SDL_Renderer* renderer, SDL_Rect* destinationArea, double rotation) 
-: Renderable(filePathToSurface, renderer, destinationArea, rotation) { };
+: Renderable(filePathToSurface, renderer, destinationArea, rotation), B2Entity(destinationArea, rotation) { };
 
 Ball::~Ball() { };
 

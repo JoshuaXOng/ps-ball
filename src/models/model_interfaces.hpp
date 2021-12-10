@@ -19,6 +19,8 @@ class B2Entity : public Updateable {
 
     public:
 
+        B2Entity(SDL_Rect* destinationArea, double rotation);
+
         void spawn(b2World& world);
 
         //

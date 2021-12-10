@@ -7,6 +7,18 @@
 #include "../utils/sdl_utils.hpp"
 
 //
+// Updateable class implementation
+//
+
+Updateable::Updateable(SDL_Rect* destinationArea, double rotation) {
+    if (destinationArea == NULL)
+        throw "Null pointer...";
+
+    this->destinationArea = destinationArea;
+    this->rotation = rotation;
+};
+
+//
 // Renderable class implementation
 //
 
@@ -20,7 +32,7 @@ Renderable::Renderable(const char* filePathToSurface, SDL_Renderer* renderer, SD
 Renderable::~Renderable() { };
 
 void Renderable::onRender() {
-    if (this->renderer == NULL || this->texture == NULL || this->destinationArea == NULL || this->rotation == NULL)
+    if (this->renderer == NULL || this->texture == NULL || this->destinationArea == NULL)
         throw "The necessary properties to render this entity have not been assigned.";
 
     SDL_RenderCopyEx( 
