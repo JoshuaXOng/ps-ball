@@ -87,13 +87,10 @@ void GameEngine::handleEvents() {
                 {                        
                     SDL_Point mousePosition = this->mouseTelemetry->getCurrentPosition();
                     SDL_Rect* destinationArea = new SDL_Rect { mousePosition.x, mousePosition.y, 100, 100 };
-                    double* rotation = new double { 5 };
-                    Square* square = new Square(this->renderer, destinationArea, rotation);
-                    square->spawn(this->world);
-                    std::cout << square->body->GetPosition().y << std::endl;
-                    // b2Vec2 test(100, 100);
-                    // square->body->SetSleepingAllowed(false);
-                    // square->body->SetLinearVelocity(test);
+                    double rotation = 50;
+                    Square* square = new Square("assets/red_square.png", this->renderer, destinationArea, rotation);
+                    square->spawn(*this->world);
+                    std::cout << "Test" << std::endl;
                     this->updateables.push_back((Updateable*) square);
                     this->renderables.push_back((Renderable*) square);
                 }

@@ -8,69 +8,54 @@
 #include "square.hpp"
 #include "../utils/sdl_utils.hpp"
 
-Square::Square(SDL_Renderer* renderer, SDL_Rect* destinationArea, double* angleOfRotation ) {
-    this->renderer = renderer;
-    this->texture = SdlScreenUtils::createTexture("assets/blue_ball.png", this->renderer);
-    this->destinationArea = destinationArea;
-    this->topLeftPoint = { destinationArea->x, destinationArea->y };
-    this->centerPoint = { 
-        topLeftPoint.x + (destinationArea->w / 2), 
-        topLeftPoint.y + (destinationArea->h / 2) 
-    };
-    this->size = { destinationArea->w, destinationArea->h };
-    this->angleOfRotation = angleOfRotation;
+//
+// Square class utilities
+//
+
+b2BodyDef* getSquareBodyDef(SDL_Rect& destinationArea) {
+    b2BodyDef* bodyDef = new b2BodyDef();
+    bodyDef->type = b2_dynamicBody;
+    bodyDef->position.Set(destinationArea.x, destinationArea.y);
+    return bodyDef;
+};
+
+b2PolygonShape* getSquareShape(SDL_Rect& destinationArea) {
+    b2PolygonShape shape;
+    shape.SetAsBox(destinationArea.w / 2, destinationArea.h / 2);
+    b2PolygonShape* shapeP = new b2PolygonShape(shape);
+    return shapeP;
+};
+
+b2FixtureDef* Square::getSquareFixtureDef() {
+    if (this->shape == NULL || this->density == NULL || this->friction == NULL)
+        throw "getSquareFixture(...) is being called but the required props are NULL.";
+
+    b2FixtureDef* fixtureDef = new b2FixtureDef();
+    fixtureDef->shape = this->shape;
+    fixtureDef->density = this->density;
+    fixtureDef->friction = this->friction;
+    return fixtureDef;
+};
+
+//
+// Square class
+//
+
+Square::Square(const char* filePathToSurface, SDL_Renderer* renderer, SDL_Rect* destinationArea, double rotation)
+: Renderable(filePathToSurface, renderer, destinationArea, rotation) {
+    this->density = 1.0f;
+    this->friction = 0.3f;
+    this->bodyDef = getSquareBodyDef(*this->Renderable::destinationArea); // lvalue... rvalue
+    this->shape = getSquareShape(*this->Renderable::destinationArea); // lvalue... rvalue
+    this->fixtureDef = this->getSquareFixtureDef();
 };
 
 Square::~Square() { };
 
 //
-// B2Entity abstract class implementation
+// B2Entity class implementation
 //
 
-float Square::getDensity() { return 1.0f; };
-
-float Square::getFriction() { return 0.3f; };
-
-b2BodyDef* Square::getBodyDef() {
-    b2BodyDef* bodyDef = new b2BodyDef();
-    bodyDef->type = b2_dynamicBody;
-    bodyDef->position.Set(this->centerPoint.x, this->centerPoint.y);
-    return bodyDef;
+void Square::onUpdate(std::vector<Updateable*> updateables) {
+    this->B2Entity::onUpdate(updateables);
 };
-
-b2Body* Square::getBody() { return this->body; };
-
-b2PolygonShape* Square::getShape() {
-    b2PolygonShape test;
-    test.SetAsBox(destinationArea->w / 2, destinationArea->h / 2);
-    b2PolygonShape* shape = new b2PolygonShape(test);
-    return shape;
-};
-
-b2FixtureDef* Square::getFixtureDef() {
-    b2FixtureDef* fixtureDef = new b2FixtureDef();
-    fixtureDef->shape = this->getShape();
-    fixtureDef->density = this->getDensity();
-    fixtureDef->friction = this->getFriction();
-    return fixtureDef;
-};
-
-void Square::setBody(b2Body* body) { this->body = body; };
-
-//
-// Updateable abstract class implementation
-//
-
-//
-// Renderable abstract class implementation
-//
-
-SDL_Renderer* Square::getRenderer() { 
-    return this->renderer; 
-};
-
-SDL_Texture* Square::getTexture() { return this->texture; };
-
-SDL_Rect* Square::getDestinationArea() { return this->destinationArea; };
-
-double Square::getAngleOfRotation() { return *this->angleOfRotation; };

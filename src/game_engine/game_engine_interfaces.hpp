@@ -7,29 +7,43 @@
 #include "./game_engine.hpp"
 #include "./state_repository.hpp"
 
+//
+// Updateable class
+//
+
 class Updateable {
 
     public: 
 
         virtual void onUpdate(std::vector<Updateable*> updateables) = 0;
 
-        virtual bool getIsCollidable() = 0;
+        bool isCollidable;
 
-        virtual SDL_Rect* getDestinationArea() = 0;
+    protected:
+
+        SDL_Rect* destinationArea;
+        double rotation;
 
 };
+
+//
+// Renderable class
+//
 
 class Renderable {
 
     public: 
 
+        Renderable(const char* filePathToSurface, SDL_Renderer* renderer, SDL_Rect* destinationArea, double rotation);
+        ~Renderable();
+
         void onRender();
 
-    private:
+    protected:
 
-        virtual SDL_Renderer* getRenderer() = 0;
-        virtual SDL_Texture* getTexture() = 0;
-        virtual SDL_Rect* getDestinationArea() = 0;
-        virtual double getAngleOfRotation() = 0;
+        SDL_Renderer* renderer;
+        SDL_Texture* texture;
+        SDL_Rect* destinationArea;
+        double rotation;
 
 };
