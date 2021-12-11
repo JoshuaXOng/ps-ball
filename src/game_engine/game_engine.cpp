@@ -18,14 +18,15 @@
 #include "mouse_utils.hpp"
 #include "../models/ball.hpp"
 #include "../models/square.hpp"
+#include "../models/spaceships.hpp"
 #include "entity_factory.hpp"
 
 //
 // GameEngine public members
 //
 
-GameEngine::GameEngine(int tickFrequency) { //: world(gravity) {
-    b2Vec2* gravity = new b2Vec2(0.0f, 1.0f);
+GameEngine::GameEngine(int tickFrequency) {
+    b2Vec2* gravity = new b2Vec2(0.0f, 0.1f);
     this->world = new b2World(*gravity);
     this->isRunning = true;    
     this->tickFrequency = tickFrequency;
@@ -88,10 +89,16 @@ void GameEngine::handleEvents() {
                     SDL_Point mousePosition = this->mouseTelemetry->getCurrentPosition();
                     SDL_Rect* destinationArea = new SDL_Rect { mousePosition.x, mousePosition.y, 100, 100 };
                     double rotation = 50;
-                    Square* square = new Square("assets/red_square.png", this->renderer, destinationArea, rotation);
-                    square->spawn(*this->world);
-                    this->updateables.push_back((Updateable*) square);
-                    this->renderables.push_back((Renderable*) square);
+                    
+                    BasicSpaceship* bs = new BasicSpaceship(this->renderer, destinationArea, rotation);
+                    bs->spawn(*this->world);
+                    this->updateables.push_back((Updateable*) bs);
+                    this->renderables.push_back((Renderable*) bs);
+
+                    // Ball* ball = new Ball("assets/blue_ball.png", this->renderer, destinationArea, rotation);
+                    // ball->spawn(*this->world);
+                    // this->updateables.push_back((Updateable*) ball);
+                    // this->renderables.push_back((Renderable*) ball);
                 }
                 break;
             case SDL_KEYUP:

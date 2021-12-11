@@ -21,4 +21,14 @@ class Ball : public Renderable, public B2Entity {
         
         void onUpdate(std::vector<Updateable*> updateables);
 
+    private:
+
+        //
+        // Ball utility methods
+        //
+
+        b2BodyDef* getBallBodyDef(SDL_Rect& destinationArea);
+        b2Shape* getBallShape(SDL_Rect& destinationArea);
+        b2FixtureDef* getBallFixtureDef();
+
 };

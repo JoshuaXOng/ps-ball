@@ -1,48 +1,38 @@
-// #pragma once
-// #include <SDL2/SDL.h>
-// #include <box2d/box2d.h>
-// #include <box2d/b2_world.h>
-// #include <box2d/b2_body.h>
-// #include <box2d/b2_polygon_shape.h>
+#pragma once
+#include <SDL2/SDL.h>
+#include <box2d/box2d.h>
+#include <box2d/b2_world.h>
+#include <box2d/b2_body.h>
+#include <box2d/b2_polygon_shape.h>
 
-// #include "model_interfaces.hpp"
+#include "model_interfaces.hpp"
 
-// class BasicSpaceship : public B2Entity {
+class BasicSpaceship : public B2Entity, public RenderableMulti {
 
-//     b2Body* body;
+    public: 
 
-//     SDL_Renderer* renderer;
-//     SDL_Texture* texture;
-//     SDL_Rect* destinationArea;
-//     double rotation;
+        BasicSpaceship(
+            const std::vector<char*> filePathsToSurfaces, SDL_Renderer* renderer, 
+            std::vector<SDL_Rect*> destinationAreas, std::vector<double> rotations
+        );
+        ~BasicSpaceship();
 
-//     BasicSpaceship(SDL_Renderer* renderer, SDL_Rect* destinationArea, double angleOfRotation);
-//     ~BasicSpaceship();
+        void faceLocation(SDL_Point position);
+        
+        void moveTopGlobal();
+        void moveRightGlobal();
+        void moveBotGlobal();
+        void moveLeftGlobal();
 
-//     void faceLocation(SDL_Point position);
-    
-//     void moveTopGlobal();
-//     void moveRightGlobal();
-//     void moveBotGlobal();
-//     void moveLeftGlobal();
+        void moveTopRelative();
+        void moveRightRelative();
+        void moveBotRelative();
+        void moveLeftRelative();
 
-//     void moveTopRelative();
-//     void moveRightRelative();
-//     void moveBotRelative();
-//     void moveLeftRelative();
+        //
+        // B2Entity virtual members
+        //
 
-//     //
-//     // B2Entity abstract class declarations
-//     //
+        void onUpdate(std::vector<Updateable*> updateables);
 
-//     float getDensity();
-//     float getFriction();
-
-//     b2BodyDef* getBodyDef();
-//     b2Body* getBody();
-//     b2PolygonShape* getShape();
-//     b2FixtureDef* getFixtureDef();
-
-//     void setBody(b2Body* body);
-
-// };
+};

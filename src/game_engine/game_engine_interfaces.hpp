@@ -49,3 +49,28 @@ class Renderable {
         double rotation;
 
 };
+
+//
+// RenderableMulti class
+//
+
+class RenderableMulti {
+
+    public: 
+
+        RenderableMulti(
+            const std::vector<char*> filePathsToSurfaces, SDL_Renderer* renderer, 
+            std::vector<SDL_Rect*> destinationAreas, std::vector<double> rotations
+        );
+        ~RenderableMulti();
+
+        void onRender();
+
+    protected:
+
+        SDL_Renderer* renderer;
+        std::vector<SDL_Texture*> textures;
+        std::vector<SDL_Rect*> destinationAreas;
+        std::vector<double> rotations;
+
+};

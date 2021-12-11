@@ -36,8 +36,41 @@ class B2Entity : public Updateable {
 
         b2BodyDef* bodyDef;
         b2Body* body;
-        b2PolygonShape* shape;
+        b2Shape* shape;
         b2FixtureDef* fixtureDef;
+
+};
+
+//
+// B2EntityMulti abstract class
+//
+
+class B2EntityMulti : public Updateable {
+
+    public:
+
+        B2EntityMulti(
+            SDL_Rect* entityDestinationArea, double entityRotation,
+            std::vector<SDL_Rect*> componentDestinationAreas, std::vector<double> componentRotations
+        );
+
+        void spawn(b2World& world);
+
+        //
+        // Updateable abstract class members
+        //
+
+        void onUpdate(std::vector<Updateable*> updateables);
+
+    protected:
+
+        std::vector<float> densities;
+        std::vector<float> frictions;
+
+        b2BodyDef* bodyDef;
+        b2Body* body;
+        std::vector<b2Shape*> shapes;
+        std::vector<b2FixtureDef*> fixtureDefs;
 
 };
 
