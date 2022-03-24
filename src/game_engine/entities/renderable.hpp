@@ -1,11 +1,14 @@
 #pragma once
+#include <SDL2/SDL.h>
 #include <utility>
-#include "./updateable.hpp"
+#include "./entity.hpp"
 
-class Renderable : public Updateable {
+class Renderable : public Entity {
   public:
-    Renderable(int id, std::string name, Position position, int angle, float scale) 
-      : Updateable(id, name, position, angle, scale) {};
+    SDL_Texture* texture;
+
+    Renderable(int id, std::string name, Position position, float angle, TwoDVector size, float scale) 
+      : Entity(id, name, position, angle, size, scale) {};
       
     virtual void onRender() = 0;
 };

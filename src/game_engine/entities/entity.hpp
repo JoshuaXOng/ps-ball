@@ -9,14 +9,15 @@ class Entity {
     int id;
     std::string name;
     Position position;
-    int angle;
+    float angle;
     float scale;
 
-    Entity(int id, std::string name, Position position, int angle, float scale) {
+    Entity(int id, std::string name, Position position, float angle, TwoDVector size, float scale) {
       this->id = id;
       this->name = name;
       this->position = position;
       this->angle = angle;
+      this->size = size;
       this->scale = scale;
     };
 };
