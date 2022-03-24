@@ -27,7 +27,7 @@ int main(int argc, char** argv) {
         INITIAL_WINDOW_WIDTH, INITIAL_WINDOW_HEIGHT, 0
     );
 
-    while (gameEngine->isRunning)
+    while (gameEngine->isMainWindowRunning)
         gameEngine->tick();
 
     gameEngine->cleanUp();
