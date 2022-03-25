@@ -5,7 +5,7 @@
 #include <map>
 #include <string>
 #include <any>
-#include "../application_constants.hpp"
+#include "../constants.hpp"
 
 class SDLUtils {
 	public: 

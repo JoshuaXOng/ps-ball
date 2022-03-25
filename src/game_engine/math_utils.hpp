@@ -7,7 +7,7 @@
 #include <utility>
 #include <math.h>
 
-class Utils {
+class MathUtils {
   public:
     static float toRadians(float degrees) {
       return degrees * M_PI / 180;
