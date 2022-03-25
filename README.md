@@ -6,4 +6,4 @@ win-32
 Multi-body
 User control movement
 
-textureProvider
+Multi-inheritance is weird

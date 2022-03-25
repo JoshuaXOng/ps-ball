@@ -14,9 +14,9 @@ class Physicsable : public Entity {
     // joints
 
     Physicsable(int id, std::string name, Position position, float angle, TwoDVector size, float scale) 
-      : Entity(id, name, position, angle, size, scale) {};
+    : Entity(id, name, position, angle, size, scale) {};
 
-    void onResolution() {
+    void align() {
       if (this->body) {
         this->position.first = this->body->GetPosition().x;
         this->position.second = this->body->GetPosition().y;

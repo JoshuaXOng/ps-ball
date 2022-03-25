@@ -17,17 +17,20 @@
 
 class Ball : public Renderable, public Physicsable, public Updateable {
 	public:
-			Ball(int id, std::string name, SDL_Texture* texture, Position position, float angle, float radius, float scale)
-			 	: Renderable(id, name, position, angle, { 2*radius, 2*radius }, scale), Physicsable(id, name, position, angle, { 2*radius, 2*radius }, scale),
-				Updateable(id, name, position, angle, { 2*radius, 2*radius }, scale) {
-				this->texture = texture;
+			Ball(SDL_Renderer* renderer, int id, std::string name, Position position, float angle, float radius, float scale)
+			: Renderable(id, name, position, angle, { 2*radius, 2*radius }, scale), Physicsable(id, name, position, angle, { 2*radius, 2*radius }, scale),
+			Updateable(id, name, position, angle, { 2*radius, 2*radius }, scale) {
+				this->texture = SDLUtils::createTexture("assets/blue_ball.png", renderer);
 				this->bodyDef = getBodyDef(position); 
 				this->fixtureDef = this->getBallFixtureDef(radius);
 			};
 			~Ball() {};
 			
 			void onRender() {};
-			void onUpdate() {};
+			void onUpdate() {
+				this->align();
+				this->Renderable::position = this->Physicsable::position;
+			};
 
 	private:
 		b2BodyDef* getBodyDef(Position position) {

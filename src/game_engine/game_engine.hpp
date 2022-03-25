@@ -30,7 +30,7 @@ class GameEngine {
 		GameEngine(int tickFrequency) {
 			this->mouseRecorder = new MouseRecorder();
 
-			b2Vec2* gravity = new b2Vec2(0.0f, 0.0f);
+			b2Vec2* gravity = new b2Vec2(0.0f, 1.0f);
 			this->world = new b2World(*gravity); 
 
 			this->tickFrequency = tickFrequency;
@@ -51,17 +51,7 @@ class GameEngine {
 			// groundBox.SetAsBox(5000.0f, 1.0f);
 			// groundBody->CreateFixture(&groundBox, 0.0f);
 
-			// SDL_Point mousePosition = this->mouseRecorder->getCurrentPosition();
-			// SDL_Rect* destinationArea = new SDL_Rect { mousePosition.x, mousePosition.y, 100, 100 };
-			// double rotation = 50;
-
-			// BasicSpaceship* bs = new BasicSpaceship(this->renderer, destinationArea, rotation);
-			// bs->spawn(*this->world);
-			// this->updateables.push_back((Updateable*) bs);
-			// this->renderables.push_back((Renderable*) bs);
-			
-			std::cout << "Hello" << std::endl;
-			Ball* ball = new Ball(0, "Common Ball", SDLUtils::createTexture("assets/blue_ball.png", this->renderer), { 5, 5 }, 0, 50, 1);
+			Ball* ball = new Ball(this->renderer, 0, "Common Ball", { 5, 6 }, 0, 10, 1);
 		
 			b2Body* body = this->world->CreateBody(ball->bodyDef);
 			ball->body = body;
