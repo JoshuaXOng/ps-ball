@@ -4,22 +4,15 @@
 #include <box2d/b2_world.h>
 #include <box2d/b2_body.h>
 #include <box2d/b2_polygon_shape.h>
-
 #include <stdio.h>
 #include <iostream>
 #include <string>
 #include <map>
 #include <any>
-
 #include "game_engine/game_engine.hpp"
-#include "utils/sdl_utils.hpp"
-#include "application_constants.hpp"
-#include "utils/math_utils.hpp"
-#include "utils/keyboard_utils.hpp"
-#include "utils/time_utils.hpp"
+#include "constants.hpp"
 
 int main(int argc, char** argv) {
-
     GameEngine* gameEngine = new GameEngine(100);
     gameEngine->startMainWindow(
         INITIAL_MAIN_WINDOW_TITLE, 
@@ -33,15 +26,13 @@ int main(int argc, char** argv) {
     gameEngine->cleanUp();
 
     return EXIT_SUCCESS;
-
 };
 
 //
-// Hello Box2D ("tutorial")
+// Hello Box2D
 //
 
 void helloBox2D() {
-
     b2Vec2 gravity(0.0f, -10.0f);
     b2World world(gravity);
 
@@ -76,10 +67,4 @@ void helloBox2D() {
         float angle = body->GetAngle();
         printf("%4.2f %4.2f %4.2f\n", position.x, position.y, angle);
     }
-
 };
-
-
-
-
-
