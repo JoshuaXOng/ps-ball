@@ -14,6 +14,7 @@
 #include "./sdl_utils.hpp"
 #include "./time_utils.hpp"
 #include "../models/ball.hpp"
+#include "../models/wall.hpp"
 
 class GameEngine {
 	public:
@@ -30,7 +31,7 @@ class GameEngine {
 		GameEngine(int tickFrequency) {
 			this->mouseRecorder = new MouseRecorder();
 
-			b2Vec2* gravity = new b2Vec2(0.0f, 1.0f);
+			b2Vec2* gravity = new b2Vec2(0.0f, 0.0f);
 			this->world = new b2World(*gravity); 
 
 			this->tickFrequency = tickFrequency;
@@ -43,7 +44,7 @@ class GameEngine {
 			this->isMainWindowRunning = true;
 		};
 
-		void addInitialEntities() {
+		void spawnSomeEntities() {
 			// b2BodyDef groundBodyDef;
 			// groundBodyDef.position.Set(0.0f, 500.0f);
 			// b2Body* groundBody = this->world->CreateBody(&groundBodyDef);
@@ -59,13 +60,21 @@ class GameEngine {
 		
 			this->updateables.push_back((Updateable*) ball);
 			this->renderables.push_back((Renderable*) ball);
+
+			Wall* wall = new Wall(this->renderer, 1, "Common Wall", { 500, 500 }, 0, { 500, 500 }, 1);
+
+			wall->body = this->world->CreateBody(wall->bodyDef);
+			wall->body->CreateFixture(wall->fixtureDef);
+		
+			this->updateables.push_back((Updateable*) wall);
+			this->renderables.push_back((Renderable*) wall);
 		};
 		
 		void tick() {
 			TimeUtils::setTimeout(1 / this->tickFrequency, [=]() {
-				this->handleEvents();
+				SDL_Event event = this->handleEvents();
 				if (this->isMainWindowRunning) {
-					this->update();
+					this->update(event);
 					this->render();
 				}
 			});
@@ -81,7 +90,7 @@ class GameEngine {
 		SDL_Window* window;
 		SDL_Renderer* renderer;
 
-		void handleEvents() {
+		SDL_Event handleEvents() {
 			SDL_Event event;
 			while (SDL_PollEvent(&event)) {
 				switch (event.type) {
@@ -91,24 +100,25 @@ class GameEngine {
 					case SDL_MOUSEBUTTONDOWN: 
 						{    
 							std::cout << "Mouse button down event fired!" << std::endl;
-							this->addInitialEntities();
+							this->spawnSomeEntities();
 						} 
 						break;
-					case SDL_KEYUP:
+					case SDL_KEYDOWN:
 						{
-							std::cout << "Key-up event fired!" << std::endl;
+							std::cout << "Key-down event fired!" << std::endl;
 						}
 						break;
 					default:
 						break;
 				}
 			};
+			return event;
 		}
 		
-		void update() {
+		void update(SDL_Event event) {
 			this->world->Step(1.0f / this->tickFrequency, 6, 2);
 			for (Updateable* updateable : this->updateables) {
-				updateable->onUpdate();
+				updateable->onUpdate(event);
 			}
 		};
 
@@ -117,7 +127,8 @@ class GameEngine {
 			for (Renderable* renderable : this->renderables) {
 				if (renderable->texture) {
 					SDL_Rect destination = {
-						renderable->position.first, renderable->position.second,
+						renderable->position.first - renderable->size.first / 2, 
+						renderable->position.second - renderable->size.second / 2,
 						renderable->size.first, renderable->size.second,
 					};
 					SDL_RenderCopyEx( 

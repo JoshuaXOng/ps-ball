@@ -3,7 +3,10 @@ I dunno, some game...
 
 win-32
 
-Multi-body
+Walls w/ textures
 User control movement
+Multi-body
 
 Multi-inheritance is weird
+
+g++ -g for gdb

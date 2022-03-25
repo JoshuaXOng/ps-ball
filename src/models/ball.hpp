@@ -14,6 +14,9 @@
 #include "../game_engine/entities/updateable.hpp"
 #include "../game_engine/sdl_utils.hpp"
 #include "../game_engine/types.hpp"
+#include "../game_engine/mouse_recorder.hpp"
+
+auto test = new MouseRecorder();
 
 class Ball : public Renderable, public Physicsable, public Updateable {
 	public:
@@ -22,14 +25,25 @@ class Ball : public Renderable, public Physicsable, public Updateable {
 			Updateable(id, name, position, angle, { 2*radius, 2*radius }, scale) {
 				this->texture = SDLUtils::createTexture("assets/blue_ball.png", renderer);
 				this->bodyDef = getBodyDef(position); 
-				this->fixtureDef = this->getBallFixtureDef(radius);
+				this->fixtureDef = this->getFixtureDef(radius);
 			};
 			~Ball() {};
 			
 			void onRender() {};
-			void onUpdate() {
+
+			void onUpdate(SDL_Event event) {
+				// if (event.type == 771) {
+				// if (event.type == SDL_MOUSEBUTTONDOWN) { 
+				// 	// std::cout << "reaches?" << std::endl;
+				// 	this->body->ApplyForce({ 1000, 1000 }, { 0, 0 }, true); 
+				// }
+				int x = test->getCurrentPosition().x - this->Physicsable::position.first;
+				int y = test->getCurrentPosition().y - this->Physicsable::position.second;
+				this->body->ApplyForce({ x, y }, { 0, 0 }, true);
+
 				this->align();
 				this->Renderable::position = this->Physicsable::position;
+				this->Renderable::angle = this->Physicsable::angle;
 			};
 
 	private:
@@ -47,11 +61,11 @@ class Ball : public Renderable, public Physicsable, public Updateable {
 			return circleP;
 		};
 
-		b2FixtureDef* getBallFixtureDef(float radius) {
+		b2FixtureDef* getFixtureDef(float radius) {
 			b2FixtureDef* fixtureDef = new b2FixtureDef();
 			fixtureDef->shape = getShape(radius);
 			fixtureDef->density = 1.0f;
-			fixtureDef->friction = 0.3f;
+			fixtureDef->friction = 1.0f;
 			return fixtureDef;
 		};
 };
