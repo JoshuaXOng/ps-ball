@@ -10,6 +10,10 @@
 #include "mouse_recorder.hpp"
 #include "./entities/renderable.hpp"
 #include "./entities/updateable.hpp"
+#include "./math_utils.hpp"
+#include "./sdl_utils.hpp"
+#include "./time_utils.hpp"
+#include "../models/ball.hpp"
 
 class GameEngine {
 	public:
@@ -24,36 +28,57 @@ class GameEngine {
 		bool isMainWindowRunning = false;
 
 		GameEngine(int tickFrequency) {
-			this->mouseRecorder = new MouseRecorder(100, 10);
+			this->mouseRecorder = new MouseRecorder();
 
-			b2Vec2* gravity = new b2Vec2(1.0f, 1.0f);
+			b2Vec2* gravity = new b2Vec2(0.0f, 0.0f);
 			this->world = new b2World(*gravity); 
 
 			this->tickFrequency = tickFrequency;
+		};
+		~GameEngine() {};
 
+		void startMainWindow(const char* title, int xPos, int yPos, int width, int height, Uint32 sdlWindowFlags) {
+			this->window = SDLUtils::createWindow(title, xPos, yPos, width, height, sdlWindowFlags); 
+			this->renderer = SDLUtils::createRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+			this->isMainWindowRunning = true;
+		};
+
+		void addInitialEntities() {
 			// b2BodyDef groundBodyDef;
 			// groundBodyDef.position.Set(0.0f, 500.0f);
 			// b2Body* groundBody = this->world->CreateBody(&groundBodyDef);
 			// b2PolygonShape groundBox;
 			// groundBox.SetAsBox(5000.0f, 1.0f);
 			// groundBody->CreateFixture(&groundBox, 0.0f);
-		};
-		~GameEngine() {};
 
-		void startMainWindow(const char* title, int xPos, int yPos, int width, int height, Uint32 sdlWindowFlags) {
-			this->window = SdlScreenUtils::createWindow(title, xPos, yPos, width, height, sdlWindowFlags); 
-			this->renderer = SdlScreenUtils::createRenderer(window, -1, SDL_RENDERER_ACCELERATED);
-			this->isMainWindowRunning = true;   
+			// SDL_Point mousePosition = this->mouseRecorder->getCurrentPosition();
+			// SDL_Rect* destinationArea = new SDL_Rect { mousePosition.x, mousePosition.y, 100, 100 };
+			// double rotation = 50;
+
+			// BasicSpaceship* bs = new BasicSpaceship(this->renderer, destinationArea, rotation);
+			// bs->spawn(*this->world);
+			// this->updateables.push_back((Updateable*) bs);
+			// this->renderables.push_back((Renderable*) bs);
+			
+			std::cout << "Hello" << std::endl;
+			Ball* ball = new Ball(0, "Common Ball", SDLUtils::createTexture("assets/blue_ball.png", this->renderer), { 5, 5 }, 0, 50, 1);
+		
+			b2Body* body = this->world->CreateBody(ball->bodyDef);
+			ball->body = body;
+			body->CreateFixture(ball->fixtureDef);
+		
+			this->updateables.push_back((Updateable*) ball);
+			this->renderables.push_back((Renderable*) ball);
 		};
 		
 		void tick() {
-			auto unblockAt = std::chrono::steady_clock::now() + std::chrono::milliseconds(1 / this->tickFrequency);
-			this->handleEvents();
-			if (this->isMainWindowRunning) {
-				this->update();
-				this->render();
-			}
-			std::this_thread::sleep_until(unblockAt);
+			TimeUtils::setTimeout(1 / this->tickFrequency, [=]() {
+				this->handleEvents();
+				if (this->isMainWindowRunning) {
+					this->update();
+					this->render();
+				}
+			});
 		};
 
 		void cleanUp() {
@@ -71,30 +96,17 @@ class GameEngine {
 			while (SDL_PollEvent(&event)) {
 				switch (event.type) {
 					case SDL_QUIT:
-						this->cleanUp();
 						this->isMainWindowRunning = false;
 						break;
 					case SDL_MOUSEBUTTONDOWN: 
-						{                        
-							SDL_Point mousePosition = this->mouseRecorder->getCurrentPosition();
-							SDL_Rect* destinationArea = new SDL_Rect { mousePosition.x, mousePosition.y, 100, 100 };
-							double rotation = 50;
-							
-							// BasicSpaceship* bs = new BasicSpaceship(this->renderer, destinationArea, rotation);
-							// bs->spawn(*this->world);
-							// this->updateables.push_back((Updateable*) bs);
-							// this->renderables.push_back((Renderable*) bs);
-
-							// Ball* ball = new Ball("assets/blue_ball.png", this->renderer, destinationArea, rotation);
-							// ball->spawn(*this->world);
-							// this->updateables.push_back((Updateable*) ball);
-							// this->renderables.push_back((Renderable*) ball);
+						{    
+							std::cout << "Mouse button down event fired!" << std::endl;
+							this->addInitialEntities();
 						} 
 						break;
 					case SDL_KEYUP:
 						{
-								b2Body* test = this->world->GetBodyList();
-								std::cout << test->GetFixtureList() << std::endl;
+							std::cout << "Key-up event fired!" << std::endl;
 						}
 						break;
 					default:
@@ -102,24 +114,32 @@ class GameEngine {
 				}
 			};
 		}
-
+		
 		void update() {
 			this->world->Step(1.0f / this->tickFrequency, 6, 2);
-			std::function<void()> updateUpdateables = [=]() {
-				for (Updateable* updateable : this->updateables) {
-					updateable->onUpdate();
-				}
-			};
-			updateUpdateables();
+			for (Updateable* updateable : this->updateables) {
+				updateable->onUpdate();
+			}
 		};
 
 		void render() {
 			SDL_RenderClear(this->renderer);
-			std::function<void()> renderRenderables = [=]() {
-				for (Renderable* renderable : this->renderables) 
+			for (Renderable* renderable : this->renderables) {
+				if (renderable->texture) {
+					SDL_Rect destination = {
+						renderable->position.first, renderable->position.second,
+						renderable->size.first, renderable->size.second,
+					};
+					SDL_RenderCopyEx( 
+						this->renderer, renderable->texture,
+						NULL, &destination,
+						renderable->angle, NULL, SDL_FLIP_NONE
+					);
 					renderable->onRender();
-			};
-			renderRenderables();
+				} else {
+					std::cout << "GameEngine tried to render Renderable w/o a texture." << std::endl;
+				}
+			}
 			SDL_RenderPresent(this->renderer);
 		};
 };
