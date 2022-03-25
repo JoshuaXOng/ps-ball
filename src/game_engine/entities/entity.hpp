@@ -10,6 +10,7 @@ class Entity {
     std::string name;
     Position position;
     float angle;
+    TwoDVector size;
     float scale;
 
     Entity(int id, std::string name, Position position, float angle, TwoDVector size, float scale) {

@@ -5,7 +5,6 @@
 #include <box2d/b2_polygon_shape.h>
 #include <utility>
 #include "./updateable.hpp"
-#include "../utils.hpp"
 
 class Physicsable : public Entity {
   public:
