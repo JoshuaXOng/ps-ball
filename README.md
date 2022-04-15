@@ -10,3 +10,5 @@ Multi-body
 Multi-inheritance is weird
 
 g++ -g for gdb
+
+Apply static code analyser
